@@ -17,15 +17,18 @@
 
 <script setup lang="ts">
 import { useCountries } from '~/composables/useCountries'
+import { useDebounce } from '@vueuse/core'
+
 const { countries, error, loading } = useCountries()
 const searchQuery = ref('')
+const debouncedQuery = useDebounce(searchQuery, 700)
 
 const filteredCountries = computed(() => {
   const query = searchQuery.value.toLowerCase()
   return countries.value.filter(
     c =>
       c.name.toLowerCase().includes(query) ||
-      c.countryCode.toLowerCase().includes(query)
+     c.name.toLowerCase().includes(debouncedQuery.value.toLowerCase())
   )
 })
 
