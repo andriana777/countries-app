@@ -15,12 +15,10 @@
                     v-html="highlightMatch(country.name, debouncedQuery) + ' - ' + country.countryCode" />
             </li>
         </ul>
-        <div class="text-sm text-gray-500">Current page: {{ currentPage }}</div>
 
         <UContainer class="mt-6 flex justify-center">
-            <UPagination v-model:page="currentPage" :page-count="perPage"
-             :total="filteredCountries.length" size="sm"
-            :max="5" />
+            <UPagination v-model:page="currentPage" :page-count="perPage" :total="filteredCountries.length" size="sm"
+                :max="5" />
         </UContainer>
     </div>
 </template>
@@ -28,12 +26,17 @@
 <script setup lang="ts">
 import { useCountries } from '~/composables/useCountries'
 import { useDebounce } from '@vueuse/core'
+import { useRouter, useRoute } from 'vue-router'
 
 const { countries, error, loading } = useCountries()
+const router = useRouter()
+const route = useRoute()
+
 const searchQuery = ref('')
 const debouncedQuery = useDebounce(searchQuery, 700)
 
-const currentPage = ref(1)
+// const currentPage = ref(1)
+const currentPage = ref(Number(route.query.page) || 1)
 const perPage = 10
 
 const totalPages = computed(() =>
@@ -62,8 +65,16 @@ const filteredCountries = computed(() => {
 // })
 
 const paginatedCountries = computed(() => {
-  const start = (currentPage.value - 1) * perPage
-  const end = start + perPage
-  return filteredCountries.value.slice(start, end)
+    const start = (currentPage.value - 1) * perPage
+    const end = start + perPage
+    return filteredCountries.value.slice(start, end)
+})
+
+watch(currentPage, (newPage) => {   // <== здесь
+    router.replace({ query: { ...route.query, page: String(newPage) } })
+})
+
+watch(searchQuery, () => {   // <== здесь
+    currentPage.value = 1
 })
 </script>
