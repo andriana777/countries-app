@@ -1,7 +1,8 @@
 <template>
-    <div class="container">
+    <div class="container p-4">
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
+        <!-- <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4"> -->
+        <div class="flex gap-4 mt-4">
             <CountriesList />
             <RandCountriesWidget />
 
